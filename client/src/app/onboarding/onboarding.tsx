@@ -5,7 +5,8 @@ import CraftEventImage from '@assets/craft-event.webp';
 import WelcomeImage from '@assets/welcome.webp';
 import TrackTransactions from '@assets/track-transactions.webp';
 import { GestureDetector, Gesture, Directions } from "react-native-gesture-handler";
-import useImage from '@components/hooks/useImage'
+import useImage from '@components/hooks/useImage';
+import Animated, { FadeInUp, FadeOutDown, SlideInRight, SlideOutLeft } from 'react-native-reanimated';
 
 const onboardingSteps = [
   {
@@ -69,13 +70,13 @@ export default function OnboardingScreens() {
         ))}
       </View>
       <GestureDetector gesture={swipe}>
-      <View style={styles.pageContent}>
-        <Image style={styles.image} source={data.image}/>
+      <View key={screenIndex} style={styles.pageContent}>
+        <Animated.Image entering={FadeInUp} exiting={FadeOutDown} style={styles.image} source={data.image}/>
         <View style={styles.footer}>
-          <Text style={styles.title}>{data.title}</Text>
-          <Text style={styles.description}>
+          <Animated.Text style={styles.title} entering={SlideInRight.delay(200)} exiting={SlideOutLeft} >{data.title}</Animated.Text>
+          <Animated.Text entering={SlideInRight.delay(200)} exiting={SlideOutLeft} style={styles.description}>
             {data.description}
-          </Text>
+          </Animated.Text>
           <View style={styles.buttonsRow}>
             <Text onPress={endOnboarding} style={styles.buttonText}>Skip</Text>
             <Pressable onPress={onContinue} style={styles.button}>
