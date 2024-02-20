@@ -1,11 +1,11 @@
 import { Text, View, StyleSheet, SafeAreaView, Pressable, Image, ActivityIndicator } from "react-native";
 import { Stack, router } from "expo-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import CraftEventImage from '@assets/craft-event.webp';
 import WelcomeImage from '@assets/welcome.webp';
 import TrackTransactions from '@assets/track-transactions.webp';
-import { Asset } from 'expo-asset';
 import { GestureDetector, Gesture, Directions } from "react-native-gesture-handler";
+import useImage from '@components/hooks/useImage'
 
 const onboardingSteps = [
   {
@@ -25,36 +25,15 @@ const onboardingSteps = [
   }
 ]
 
-type ImageResource = string | number;
-
-function cacheImages(images: ImageResource[]) {
-  return images.map(image => Asset.fromModule(image).downloadAsync());
-}
-
 export default function OnboardingScreens() {
   const [screenIndex, setScreenIndex] = useState(0);
   const data = onboardingSteps[screenIndex]
-  const [imagesLoaded, setImagesLoaded] = useState(false);
 
-  useEffect(() => {
-    async function loadResourcesAndDataAsync() {
-      try {
-        const imageAssets = cacheImages([
-          require('@assets/welcome.webp'),
-          require('@assets/craft-event.webp'),
-          require('@assets/track-transactions.webp')
-        ]);
-
-        await Promise.all([imageAssets]);
-        console.log('Images have been cached.');
-      } catch (e) {
-        console.warn('Error caching images:', e);
-      } finally {
-        setImagesLoaded(true);
-      }
-    }
-    loadResourcesAndDataAsync();
-  }, []);
+  const imagesLoaded = useImage([
+    WelcomeImage,
+    CraftEventImage,
+    TrackTransactions
+  ]);
 
   const onContinue = () => {
     screenIndex === onboardingSteps.length - 1 ? endOnboarding() : setScreenIndex(screenIndex + 1);
