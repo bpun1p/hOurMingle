@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, SafeAreaView, Pressable, Image } from "react-native";
+import { Text, View, StyleSheet, SafeAreaView, Pressable, Image, ActivityIndicator } from "react-native";
 import { Stack, router } from "expo-router";
 import { useState, useEffect } from "react";
 import CraftEventImage from '@assets/craft-event.webp';
@@ -28,9 +28,7 @@ const onboardingSteps = [
 type ImageResource = string | number;
 
 function cacheImages(images: ImageResource[]) {
-  return images.map(image => {
-      return Asset.fromModule(image).downloadAsync();
-  });
+  return images.map(image => Asset.fromModule(image).downloadAsync());
 }
 
 export default function OnboardingScreens() {
@@ -47,9 +45,10 @@ export default function OnboardingScreens() {
           require('@assets/track-transactions.webp')
         ]);
 
-        await Promise.all([...imageAssets]);
+        await Promise.all([imageAssets]);
+        console.log('Images have been cached.');
       } catch (e) {
-        console.warn(e);
+        console.warn('Error caching images:', e);
       } finally {
         setImagesLoaded(true);
       }
@@ -58,31 +57,19 @@ export default function OnboardingScreens() {
   }, []);
 
   const onContinue = () => {
-    const isLastScreen = screenIndex === onboardingSteps.length - 1
-    if(isLastScreen) {
-      endOnboarding();
-    } else {
-      setScreenIndex(screenIndex + 1);
-    };
+    screenIndex === onboardingSteps.length - 1 ? endOnboarding() : setScreenIndex(screenIndex + 1);
   };
 
   const onBack = () => {
-    const isFirstScreen = screenIndex === 0;
-    if (isFirstScreen) {
-      endOnboarding();
-    } else {
-      setScreenIndex(screenIndex - 1);
-    };
+    screenIndex === 0 ? endOnboarding() : setScreenIndex(screenIndex - 1);
   };
 
   const endOnboarding = () => {
     setScreenIndex(0);
     router.back();
   };
-
-  if (!imagesLoaded) {
-    return null;
-  };
+  
+  if (!imagesLoaded) return null;
 
   const swipe = Gesture.Simultaneous(
     Gesture.Fling().direction(Directions.RIGHT).onEnd(onBack),
