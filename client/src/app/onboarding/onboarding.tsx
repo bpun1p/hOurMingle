@@ -28,7 +28,7 @@ const onboardingSteps = [
 
 export default function OnboardingScreens() {
   const [screenIndex, setScreenIndex] = useState(0);
-  const data = onboardingSteps[screenIndex]
+  const data = onboardingSteps[screenIndex];
 
   const imagesLoaded = useImage([
     WelcomeImage,
