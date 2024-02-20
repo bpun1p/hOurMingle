@@ -5,6 +5,7 @@ import CraftEventImage from '@assets/craft-event.webp';
 import WelcomeImage from '@assets/welcome.webp';
 import TrackTransactions from '@assets/track-transactions.webp';
 import { Asset } from 'expo-asset';
+import { GestureDetector, Gesture, Directions } from "react-native-gesture-handler";
 
 const onboardingSteps = [
   {
@@ -65,6 +66,15 @@ export default function OnboardingScreens() {
     };
   };
 
+  const onBack = () => {
+    const isFirstScreen = screenIndex === 0;
+    if (isFirstScreen) {
+      endOnboarding();
+    } else {
+      setScreenIndex(screenIndex - 1);
+    };
+  };
+
   const endOnboarding = () => {
     setScreenIndex(0);
     router.back();
@@ -74,6 +84,11 @@ export default function OnboardingScreens() {
     return null;
   };
 
+  const swipe = Gesture.Simultaneous(
+    Gesture.Fling().direction(Directions.RIGHT).onEnd(onBack),
+    Gesture.Fling().direction(Directions.LEFT).onEnd(onContinue)
+  );
+
   return (
     <SafeAreaView style={styles.page}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -82,11 +97,12 @@ export default function OnboardingScreens() {
           <View key={index}
             style={[
               styles.stepIndicator, 
-              {backgroundColor: index === screenIndex ? '#cef202': 'grey'}
+              {backgroundColor: index === screenIndex ? '#50c878': 'grey'}
             ]} 
           />
         ))}
       </View>
+      <GestureDetector gesture={swipe}>
       <View style={styles.pageContent}>
         <Image style={styles.image} source={data.image}/>
         <View style={styles.footer}>
@@ -102,6 +118,7 @@ export default function OnboardingScreens() {
           </View>
         </View>
       </View>
+      </GestureDetector>
     </SafeAreaView>
   )
 };

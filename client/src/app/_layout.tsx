@@ -3,6 +3,11 @@ import { useFonts, Pacifico_400Regular  } from '@expo-google-fonts/pacifico'
 import { Inter_700Bold, Inter_600SemiBold, Inter_400Regular, Inter_900Black } from "@expo-google-fonts/inter";
 import { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+// import Onboarding from './onboarding/onboarding';
+// import { createStackNavigator } from '@react-navigation/stack';
+
+// const Stack = createStackNavigator();
 
 SplashScreen.preventAutoHideAsync();
 
@@ -27,8 +32,16 @@ export default function RootLayout() {
   };
 
   return (
-    <Stack>
-      <Stack.Screen name='index' options={{ headerShown: false }} />
-    </Stack> 
+    <GestureHandlerRootView style={{flex: 1}}>
+      <Stack>
+        <Stack.Screen name='index' options={{ headerShown: false }}/>
+      </Stack> 
+    </GestureHandlerRootView>
+
+    // <GestureHandlerRootView style={{flex: 1}}>
+    //   <Stack.Navigator>
+    //     <Stack.Screen name='onboarding/onboarding' component={Onboarding } options={{ headerShown: false }} />
+    //   </Stack.Navigator> 
+    // </GestureHandlerRootView>
   )
 }
