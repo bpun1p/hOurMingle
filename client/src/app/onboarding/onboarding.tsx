@@ -77,6 +77,16 @@ export default function OnboardingScreens() {
   return (
     <SafeAreaView style={styles.page}>
       <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.stepIndicatorContainer}>
+        {onboardingSteps.map((step, index) => (
+          <View key={index}
+            style={[
+              styles.stepIndicator, 
+              {backgroundColor: index === screenIndex ? '#cef202': 'grey'}
+            ]} 
+          />
+        ))}
+      </View>
       <View style={styles.pageContent}>
         <Image style={styles.image} source={data.image}/>
         <View style={styles.footer}>
@@ -149,5 +159,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 15,
     paddingHorizontal: 25
+  },
+  stepIndicatorContainer : {
+    flexDirection: 'row',
+    gap: 8,
+    marginHorizontal: 15
+  },
+  stepIndicator: {
+    flex: 1,
+    height: 3,
+    backgroundColor: 'grey',
+    borderRadius: 10
   }
 });
