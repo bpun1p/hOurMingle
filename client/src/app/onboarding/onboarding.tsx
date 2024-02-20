@@ -1,9 +1,10 @@
 import { Text, View, StyleSheet, SafeAreaView, Pressable, Image } from "react-native";
 import { Stack, router } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CraftEventImage from '@assets/craft-event.webp';
 import WelcomeImage from '@assets/welcome.webp';
 import TrackTransactions from '@assets/track-transactions.webp';
+import { Asset } from 'expo-asset';
 
 const onboardingSteps = [
   {
@@ -23,9 +24,37 @@ const onboardingSteps = [
   }
 ]
 
+type ImageResource = string | number;
+
+function cacheImages(images: ImageResource[]) {
+  return images.map(image => {
+      return Asset.fromModule(image).downloadAsync();
+  });
+}
+
 export default function OnboardingScreens() {
   const [screenIndex, setScreenIndex] = useState(0);
   const data = onboardingSteps[screenIndex]
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+
+  useEffect(() => {
+    async function loadResourcesAndDataAsync() {
+      try {
+        const imageAssets = cacheImages([
+          require('@assets/welcome.webp'),
+          require('@assets/craft-event.webp'),
+          require('@assets/track-transactions.webp')
+        ]);
+
+        await Promise.all([...imageAssets]);
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setImagesLoaded(true);
+      }
+    }
+    loadResourcesAndDataAsync();
+  }, []);
 
   const onContinue = () => {
     const isLastScreen = screenIndex === onboardingSteps.length - 1
@@ -33,12 +62,16 @@ export default function OnboardingScreens() {
       endOnboarding();
     } else {
       setScreenIndex(screenIndex + 1);
-    }
+    };
   };
 
   const endOnboarding = () => {
     setScreenIndex(0);
     router.back();
+  };
+
+  if (!imagesLoaded) {
+    return null;
   };
 
   return (
