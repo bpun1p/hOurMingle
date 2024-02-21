@@ -1,5 +1,5 @@
-import { Text, View, StyleSheet, SafeAreaView, Pressable, Image, ActivityIndicator } from "react-native";
-import { Stack, router } from "expo-router";
+import { Text, View, StyleSheet, SafeAreaView, Pressable } from "react-native";
+import { Stack } from "expo-router";
 import { useState } from "react";
 import CraftEventImage from '@assets/craft-event.webp';
 import WelcomeImage from '@assets/welcome.webp';
@@ -7,6 +7,8 @@ import TrackTransactions from '@assets/track-transactions.webp';
 import { GestureDetector, Gesture, Directions } from "react-native-gesture-handler";
 import useImage from '@components/hooks/useImage';
 import Animated, { FadeInUp, FadeOutDown, SlideInRight, SlideOutLeft } from 'react-native-reanimated';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../_layout';
 
 const onboardingSteps = [
   {
@@ -25,8 +27,9 @@ const onboardingSteps = [
     description: 'Effortlessly monitor event payments. Ensure transparency and efficiency by managing who has fulfilled their financial commitments, all within a single interface.'
   }
 ]
+type OnboardingScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Onboarding'>;
 
-export default function OnboardingScreens() {
+export default function OnboardingScreens({ navigation }: {navigation: OnboardingScreenNavigationProp}) {
   const [screenIndex, setScreenIndex] = useState(0);
   const data = onboardingSteps[screenIndex];
 
@@ -46,7 +49,7 @@ export default function OnboardingScreens() {
 
   const endOnboarding = () => {
     setScreenIndex(0);
-    router.back();
+    navigation.goBack();
   };
   
   if (!imagesLoaded) return null;
@@ -58,7 +61,7 @@ export default function OnboardingScreens() {
 
   return (
     <SafeAreaView style={styles.page}>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen />
       <View style={styles.stepIndicatorContainer}>
         {onboardingSteps.map((step, index) => (
           <View key={index}
